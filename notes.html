@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSAP Notes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="gallery">
+        <div class="gallery-header">
+            <div class="gallery-title">
+                <span class="brace">{</span>
+                gsap notes
+                <span class="brace">}</span>
+            </div>
+            <a href="index.html" class="back-link">&larr; back</a>
+        </div>
+
+        <ul class="gallery-grid">
+            <li class="gallery-card" data-note="to">
+                <span class="card-label">gsap.to()</span>
+                <span class="card-desc">animate → to values</span>
+                <div class="box green"></div>
+            </li>
+
+            <li class="gallery-card" data-note="from">
+                <span class="card-label">gsap.from()</span>
+                <span class="card-desc">animate ← from values</span>
+                <div class="box orange"></div>
+            </li>
+
+            <li class="gallery-card" data-note="fromto">
+                <span class="card-label">gsap.fromTo()</span>
+                <span class="card-desc">define start &amp; end</span>
+                <div class="box green"></div>
+            </li>
+
+            <li class="gallery-card" data-note="set">
+                <span class="card-label">gsap.set()</span>
+                <span class="card-desc">instant, no animation</span>
+                <div class="box pink"></div>
+            </li>
+
+            <li class="gallery-card" data-note="keyframes">
+                <span class="card-label">keyframes</span>
+                <span class="card-desc">array of states</span>
+                <div class="box orange"></div>
+            </li>
+
+            <li class="gallery-card" data-note="stagger">
+                <span class="card-label">stagger</span>
+                <span class="card-desc">offset each start</span>
+                <div class="stagger-group">
+                    <div class="dot purple"></div>
+                    <div class="dot purple"></div>
+                    <div class="dot purple"></div>
+                </div>
+            </li>
+
+            <li class="gallery-card" data-note="timeline">
+                <span class="card-label">timeline</span>
+                <span class="card-desc">sequence of tweens</span>
+                <div class="box pink"></div>
+            </li>
+
+            <li class="gallery-card" data-note="easings">
+                <span class="card-label">easings</span>
+                <span class="card-desc">bounce / back / elastic / power</span>
+                <div class="easing-group">
+                    <span class="easing-dot" style="background:#0ae448"></span>
+                    <span class="easing-dot" style="background:#ff8709"></span>
+                    <span class="easing-dot" style="background:#9d95ff"></span>
+                    <span class="easing-dot" style="background:#fec5fb"></span>
+                </div>
+            </li>
+
+            <li class="gallery-card" data-note="callbacks">
+                <span class="card-label">callbacks</span>
+                <span class="card-desc">onStart / onComplete / onUpdate</span>
+                <span class="counter-badge" id="counterBadge">0</span>
+            </li>
+
+            <li class="gallery-card" data-note="scrolltrigger">
+                <span class="card-label">ScrollTrigger</span>
+                <span class="card-desc">animate on scroll</span>
+                <div class="box purple"></div>
+            </li>
+
+            <li class="gallery-card" data-note="utils">
+                <span class="card-label">gsap.utils</span>
+                <span class="card-desc">random / clamp / snap</span>
+                <span class="rand-num" id="randNum">0</span>
+            </li>
+
+            <li class="gallery-card" data-note="draggable" id="dragCard">
+                <span class="card-label">Draggable</span>
+                <span class="card-desc">click &amp; drag</span>
+                <div class="box pink drag-me"></div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="modal">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <p class="modal-title" id="modalTitle"></p>
+            <p class="modal-desc" id="modalDesc"></p>
+            <code id="modalCode"></code>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/Draggable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
