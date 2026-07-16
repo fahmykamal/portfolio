@@ -246,6 +246,20 @@ body:not(.landing) {
     margin: 0 0 1.5rem;
     }
 
+.modal code {
+    display: block;
+    background: #242424;
+    color: #0ae448;
+    padding: 1.25rem;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre;
+    overflow-x: auto;
+    font-family: "Courier New", monospace;
+    border: 1px solid #2a2a2a;
+    }
+
 /* ── Landing page ────────────────────────────── */
 
 body.landing {
