@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog CMS API Docs</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        body { display:flex; flex-direction:column; min-height:100vh; overflow:auto; }
+        .docs { max-width:900px; width:100%; margin:0 auto; padding:0 2rem 3rem; }
+        .docs h2 { color:#fffce1; font-size:20px; margin:2.5rem 0 1rem; }
+        .docs h3 { color:#fffce1; font-size:15px; margin:1.5rem 0 0.5rem; display:flex; align-items:center; gap:0.5rem; }
+        .docs p, .docs li { color:#7c7c6f; font-size:13px; line-height:1.7; }
+        .docs ul { padding-left:1.25rem; margin:0.5rem 0; }
+        .docs a { color:#0ae448; }
+        .doc-card { background:#191919; border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+        .doc-card code, .doc-code { display:block; background:#0e100f; border:1px solid #2a2a2a; border-radius:8px; padding:1rem; font-size:12.5px; line-height:1.7; white-space:pre; overflow-x:auto; font-family:"Courier New",monospace; color:#0ae448; margin:0.5rem 0; }
+        .doc-code .cmt { color:#7c7c6f; }
+        .doc-code .key { color:#f7bdf8; }
+        .doc-code .str { color:#ff8709; }
+        .doc-code .bool { color:#9d95ff; }
+        .badge { font-size:10px; font-weight:700; padding:2px 7px; border-radius:4px; text-transform:uppercase; letter-spacing:0.5px; margin-right:6px; }
+        .badge.get { background:#0ae44820; color:#0ae448; }
+        .badge.post { background:#ff870920; color:#ff8709; }
+        .badge.put { background:#f7bdf820; color:#f7bdf8; }
+        .badge.delete { background:#ff444420; color:#ff4444; }
+        .badge.auth { background:#2f3cc020; color:#9d95ff; }
+        .ep-row { display:flex; align-items:center; gap:0.5rem; margin:0.25rem 0; }
+        .ep-path { font-family:"Courier New",monospace; color:#fffce1; font-size:13px; }
+        .ep-desc { color:#7c7c6f; font-size:12px; }
+        .field-grid { display:grid; grid-template-columns:auto 1fr auto; gap:0.25rem 1rem; margin:0.5rem 0; font-size:12.5px; }
+        .field-grid .f-name { color:#f7bdf8; font-family:"Courier New",monospace; }
+        .field-grid .f-type { color:#7c7c6f; }
+        .field-grid .f-req { color:#ff4444; font-size:10px; }
+        .doc-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; padding-top:1.5rem; }
+        .nav-docs { display:flex; gap:2rem; }
+        .nav-docs a { color:#7c7c6f; text-decoration:none; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:1px; transition:color 0.2s; }
+        .nav-docs a:hover { color:#fffce1; }
+    </style>
+</head>
+<body>
+
+    <nav class="nav" style="flex-shrink:0;">
+        <span class="nav-logo">blog cms api</span>
+        <div class="nav-links">
+            <a href="api-playground.html" class="nav-link">playground</a>
+            <a href="index.html" class="nav-link">&larr; back</a>
+        </div>
+    </nav>
+
+    <main class="docs">
+
+        <div class="doc-header">
+            <h1 style="color:#fffce1;font-size:28px;margin:0;">API Documentation</h1>
+        </div>
+
+        <p style="color:#7c7c6f;font-size:13px;margin:0 0 2rem;">
+            Base URL: <code style="color:#0ae448;background:#191919;padding:2px 8px;border-radius:4px;">https://blog-cms-api-iekn.onrender.com</code>
+        </p>
+
+        <!-- ── Getting Started ── -->
+        <h2>Getting Started</h2>
+        <div class="doc-card">
+            <p>This API powers a blog CMS with posts, categories, comments, and JWT-based authentication. All protected endpoints require a <code style="color:#0ae448;">Bearer</code> token in the <code style="color:#0ae448;">Authorization</code> header.</p>
+
+            <h3>Authentication Flow</h3>
+            <ol style="color:#7c7c6f;font-size:13px;line-height:2;padding-left:1.25rem;margin:0.5rem 0;">
+                <li><code style="color:#0ae448;">POST /api/auth/register</code> or <code style="color:#0ae448;">POST /api/auth/login</code> to get a JWT token</li>
+                <li>Include the token in subsequent requests: <code style="color:#0ae448;">Authorization: Bearer &lt;token&gt;</code></li>
+                <li>Use <code style="color:#0ae448;">GET /api/auth/me</code> to verify the current session</li>
+            </ol>
+        </div>
+
+        <!-- ── Auth ── -->
+        <h2>Authentication</h2>
+
+        <div class="doc-card">
+            <h3><span class="badge post">post</span> <span class="ep-path">/api/auth/register</span></h3>
+            <p>Create a new user account and receive a JWT token.</p>
+            <p style="font-size:12px;color:#7c7c6f;margin-bottom:0.25rem;">Request body:</p>
+            <div class="field-grid">
+                <span class="f-name">username</span><span class="f-type">string</span><span class="f-req">required</span>
+                <span class="f-name">email</span><span class="f-type">string</span><span class="f-req">required</span>
+                <span class="f-name">password</span><span class="f-type">string</span><span class="f-req">required</span>
+                <span class="f-name">displayName</span><span class="f-type">string</span><span class="f-req">required</span>
+            </div>
+            <div class="doc-code">{
+    <span class="key">"username"</span>: <span class="str">"ahmad"</span>,
+    <span class="key">"email"</span>: <span class="str">"ahmad@test.com"</span>,
+    <span class="key">"password"</span>: <span class="str">"test123"</span>,
+    <span class="key">"displayName"</span>: <span class="str">"Ahmad Fahmi"</span>
+}</div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.75rem 0 0.25rem;">Response <span style="color:#0ae448;">200</span>:</p>
+            <div class="doc-code">{
+    <span class="key">"token"</span>: <span class="str">"eyJhbGciOiJIUzI1NiIs..."</span>,
+    <span class="key">"expiresAt"</span>: <span class="str">"2026-07-18T14:05:41Z"</span>,
+    <span class="key">"user"</span>: {
+        <span class="key">"id"</span>: <span class="str">1</span>,
+        <span class="key">"username"</span>: <span class="str">"ahmad"</span>,
+        <span class="key">"email"</span>: <span class="str">"ahmad@test.com"</span>,
+        <span class="key">"displayName"</span>: <span class="str">"Ahmad Fahmi"</span>
+    }
+}</div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0;">Errors: <span style="color:#ff4444;">409</span> if username already exists</p>
+        </div>
+
+        <div class="doc-card">
+            <h3><span class="badge post">post</span> <span class="ep-path">/api/auth/login</span></h3>
+            <p>Log in with existing credentials and receive a JWT token.</p>
+            <div class="field-grid">
+                <span class="f-name">username</span><span class="f-type">string</span><span class="f-req">required</span>
+                <span class="f-name">password</span><span class="f-type">string</span><span class="f-req">required</span>
+            </div>
+            <div class="doc-code">{
+    <span class="key">"username"</span>: <span class="str">"ahmad"</span>,
+    <span class="key">"password"</span>: <span class="str">"test123"</span>
+}</div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.75rem 0 0.25rem;">Response <span style="color:#0ae448;">200</span>:</p>
+            <div class="doc-code">{
+    <span class="key">"token"</span>: <span class="str">"eyJhbGciOiJIUzI1NiIs..."</span>,
+    <span class="key">"expiresAt"</span>: <span class="str">"2026-07-18T14:05:41Z"</span>,
+    <span class="key">"user"</span>: {
+        <span class="key">"id"</span>: 1,
+        <span class="key">"username"</span>: <span class="str">"ahmad"</span>,
+        <span class="key">"email"</span>: <span class="str">"ahmad@test.com"</span>,
+        <span class="key">"displayName"</span>: <span class="str">"Ahmad Fahmi"</span>
+    }
+}</div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0;">Errors: <span style="color:#ff4444;">401</span> if credentials are invalid</p>
+        </div>
+
+        <div class="doc-card">
+            <h3><span class="badge get">get</span> <span class="badge auth">auth</span> <span class="ep-path">/api/auth/me</span></h3>
+            <p>Get the currently authenticated user's info.</p>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0.25rem;">Response <span style="color:#0ae448;">200</span>:</p>
+            <div class="doc-code">{
+    <span class="key">"userId"</span>: <span class="str">"1"</span>,
+    <span class="key">"username"</span>: <span class="str">"ahmad"</span>
+}</div>
+        </div>
+
+        <!-- ── Posts ── -->
+        <h2>Posts</h2>
+
+        <div class="doc-card">
+            <h3><span class="badge get">get</span> <span class="ep-path">/api/posts?published=true</span></h3>
+            <p>List all posts. Use <code style="color:#0ae448;">?published=true</code> (default) to show only published posts, or <code style="color:#0ae448;">?published=false</code> to include drafts.</p>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0.25rem;">Response <span style="color:#0ae448;">200</span>:</p>
+            <div class="doc-code">[
+    {
+        <span class="key">"id"</span>: 9,
+        <span class="key">"title"</span>: <span class="str">"Hello World"</span>,
+        <span class="key">"slug"</span>: <span class="str">"hello-world"</span>,
+        <span class="key">"excerpt"</span>: <span class="str">"A short excerpt"</span>,
+        <span class="key">"isPublished"</span>: <span class="bool">true</span>,
+        <span class="key">"createdAt"</span>: <span class="str">"2026-07-17T14:05:59Z"</span>,
+        <span class="key">"publishedAt"</span>: <span class="str">"2026-07-17T14:05:59Z"</span>,
+        <span class="key">"author"</span>: { <span class="key">"id"</span>: 1, <span class="key">"username"</span>: <span class="str">"ahmad"</span>, <span class="key">"displayName"</span>: <span class="str">"Ahmad Fahmi"</span> },
+        <span class="key">"category"</span>: { <span class="key">"id"</span>: 2, <span class="key">"name"</span>: <span class="str">"Test Category"</span>, <span class="key">"slug"</span>: <span class="str">"test-category"</span> },
+        <span class="key">"tags"</span>: [],
+        <span class="key">"commentCount"</span>: 0
+    }
+]</div>
+        </div>
+
+        <div class="doc-card">
+            <h3><span class="badge get">get</span> <span class="ep-path">/api/posts/{slug}</span></h3>
+            <p>Get a single post by its slug.</p>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0.25rem;">Response <span style="color:#0ae448;">200</span>:</p>
+            <div class="doc-code">{
+    <span class="key">"id"</span>: 9,
+    <span class="key">"title"</span>: <span class="str">"Hello World"</span>,
+    <span class="key">"slug"</span>: <span class="str">"hello-world"</span>,
+    <span class="key">"content"</span>: <span class="str">"First blog post via API"</span>,
+    <span class="key">"excerpt"</span>: <span class="str">"A short excerpt"</span>,
+    <span class="key">"isPublished"</span>: <span class="bool">true</span>,
+    <span class="key">"author"</span>: { <span class="key">"username"</span>: <span class="str">"ahmad"</span>, <span class="key">"displayName"</span>: <span class="str">"Ahmad Fahmi"</span> },
+    <span class="key">"category"</span>: { <span class="key">"name"</span>: <span class="str">"Test Category"</span> },
+    <span class="key">"tags"</span>: [],
+    <span class="key">"comments"</span>: [],
+    <span class="key">"commentCount"</span>: 0
+}</div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0;">Errors: <span style="color:#ff4444;">404</span> if slug not found</p>
+        </div>
+
+        <div class="doc-card">
+            <h3><span class="badge post">post</span> <span class="badge auth">auth</span> <span class="ep-path">/api/posts</span></h3>
+            <p>Create a new post. Requires <span class="badge auth">auth</span>.</p>
+            <div class="field-grid">
+                <span class="f-name">title</span><span class="f-type">string</span><span class="f-req">required</span>
+                <span class="f-name">content</span><span class="f-type">string</span><span class="f-req">required</span>
+                <span class="f-name">excerpt</span><span class="f-type">string</span><span class="f-req">optional</span>
+                <span class="f-name">featuredImageUrl</span><span class="f-type">string</span><span class="f-req">optional</span>
+                <span class="f-name">isPublished</span><span class="f-type">boolean</span><span class="f-req">required</span>
+                <span class="f-name">categoryId</span><span class="f-type">int</span><span class="f-req">required</span>
+                <span class="f-name">tagIds</span><span class="f-type">int[]</span><span class="f-req">required</span>
+            </div>
+            <div class="doc-code">{
+    <span class="key">"title"</span>: <span class="str">"Hello World"</span>,
+    <span class="key">"content"</span>: <span class="str">"This is my first post."</span>,
+    <span class="key">"excerpt"</span>: <span class="str">"A short excerpt"</span>,
+    <span class="key">"isPublished"</span>: <span class="bool">true</span>,
+    <span class="key">"categoryId"</span>: 2,
+    <span class="key">"tagIds"</span>: []
+}</div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.75rem 0 0.25rem;">Response <span style="color:#0ae448;">201</span>:</p>
+            <div class="doc-code"><span class="cmt">// Returns the full post object (same as GET /{slug})</span></div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0;">Errors: <span style="color:#ff4444;">409</span> if title already exists, <span style="color:#ff4444;">404</span> if category not found</p>
+        </div>
+
+        <div class="doc-card">
+            <h3><span class="badge put">put</span> <span class="badge auth">auth</span> <span class="ep-path">/api/posts/{id}</span></h3>
+            <p>Update an existing post by ID. Requires <span class="badge auth">auth</span>.</p>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0.25rem;">Request body (same as POST):</p>
+            <div class="doc-code">{
+    <span class="key">"title"</span>: <span class="str">"Updated Title"</span>,
+    <span class="key">"content"</span>: <span class="str">"Updated content."</span>,
+    <span class="key">"isPublished"</span>: <span class="bool">true</span>,
+    <span class="key">"categoryId"</span>: 2,
+    <span class="key">"tagIds"</span>: []
+}</div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0;">Errors: <span style="color:#ff4444;">404</span> if post or category not found</p>
+        </div>
+
+        <div class="doc-card">
+            <h3><span class="badge delete">delete</span> <span class="badge auth">auth</span> <span class="ep-path">/api/posts/{id}</span></h3>
+            <p>Delete a post by ID. Requires <span class="badge auth">auth</span>.</p>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0;">Response <span style="color:#0ae448;">204</span> on success. Errors: <span style="color:#ff4444;">404</span> if not found.</p>
+        </div>
+
+        <!-- ── Categories ── -->
+        <h2>Categories</h2>
+
+        <div class="doc-card">
+            <h3><span class="badge get">get</span> <span class="ep-path">/api/categories</span></h3>
+            <p>List all categories.</p>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0.25rem;">Response <span style="color:#0ae448;">200</span>:</p>
+            <div class="doc-code">[
+    {
+        <span class="key">"id"</span>: 2,
+        <span class="key">"name"</span>: <span class="str">"Test Category"</span>,
+        <span class="key">"slug"</span>: <span class="str">"test-category"</span>
+    }
+]</div>
+        </div>
+
+        <div class="doc-card">
+            <h3><span class="badge post">post</span> <span class="badge auth">auth</span> <span class="ep-path">/api/categories</span></h3>
+            <p>Create a new category. Requires <span class="badge auth">auth</span>.</p>
+            <div class="field-grid">
+                <span class="f-name">name</span><span class="f-type">string</span><span class="f-req">required</span>
+            </div>
+            <div class="doc-code">{
+    <span class="key">"name"</span>: <span class="str">"Technology"</span>
+}</div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.75rem 0 0.25rem;">Response <span style="color:#0ae448;">200</span>:</p>
+            <div class="doc-code">{
+    <span class="key">"id"</span>: 3,
+    <span class="key">"name"</span>: <span class="str">"Technology"</span>,
+    <span class="key">"slug"</span>: <span class="str">"technology"</span>
+}</div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0;">Errors: <span style="color:#ff4444;">409</span> if category already exists</p>
+        </div>
+
+        <div class="doc-card">
+            <h3><span class="badge delete">delete</span> <span class="badge auth">auth</span> <span class="ep-path">/api/categories/{id}</span></h3>
+            <p>Delete a category by ID. Requires <span class="badge auth">auth</span>.</p>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0;">Response <span style="color:#0ae448;">204</span> on success. Errors: <span style="color:#ff4444;">404</span> if not found.</p>
+        </div>
+
+        <!-- ── Comments ── -->
+        <h2>Comments</h2>
+
+        <div class="doc-card">
+            <h3><span class="badge get">get</span> <span class="ep-path">/api/posts/{postId}/comments</span></h3>
+            <p>Get all comments for a post.</p>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0.25rem;">Response <span style="color:#0ae448;">200</span>:</p>
+            <div class="doc-code">[
+    {
+        <span class="key">"id"</span>: 1,
+        <span class="key">"content"</span>: <span class="str">"Great post!"</span>,
+        <span class="key">"createdAt"</span>: <span class="str">"2026-07-17T14:10:00Z"</span>,
+        <span class="key">"author"</span>: {
+            <span class="key">"id"</span>: 1,
+            <span class="key">"username"</span>: <span class="str">"ahmad"</span>,
+            <span class="key">"displayName"</span>: <span class="str">"Ahmad Fahmi"</span>
+        }
+    }
+]</div>
+        </div>
+
+        <div class="doc-card">
+            <h3><span class="badge post">post</span> <span class="badge auth">auth</span> <span class="ep-path">/api/posts/{postId}/comments</span></h3>
+            <p>Add a comment to a post. Requires <span class="badge auth">auth</span>.</p>
+            <div class="field-grid">
+                <span class="f-name">content</span><span class="f-type">string</span><span class="f-req">required</span>
+            </div>
+            <div class="doc-code">{
+    <span class="key">"content"</span>: <span class="str">"Great post!"</span>
+}</div>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0;">Errors: <span style="color:#ff4444;">404</span> if post not found</p>
+        </div>
+
+        <div class="doc-card">
+            <h3><span class="badge delete">delete</span> <span class="badge auth">auth</span> <span class="ep-path">/api/posts/{postId}/comments/{id}</span></h3>
+            <p>Delete a comment by ID. Requires <span class="badge auth">auth</span>.</p>
+            <p style="font-size:12px;color:#7c7c6f;margin:0.5rem 0 0;">Response <span style="color:#0ae448;">204</span> on success. Errors: <span style="color:#ff4444;">404</span> if not found.</p>
+        </div>
+
+        <!-- ── Error Responses ── -->
+        <h2>Error Responses</h2>
+        <div class="doc-card">
+            <p>All errors return a consistent JSON format:</p>
+            <div class="doc-code">{
+    <span class="key">"error"</span>: <span class="str">"Category with ID 999 not found."</span>
+}</div>
+            <div class="field-grid" style="margin-top:0.75rem;">
+                <span class="f-name">400</span><span class="f-type">Bad Request</span><span class="f-req">validation errors</span>
+                <span class="f-name">401</span><span class="f-type">Unauthorized</span><span class="f-req">invalid credentials</span>
+                <span class="f-name">404</span><span class="f-type">Not Found</span><span class="f-req">resource doesn't exist</span>
+                <span class="f-name">409</span><span class="f-type">Conflict</span><span class="f-req">duplicate title/name</span>
+                <span class="f-name">500</span><span class="f-type">Internal Server Error</span><span class="f-req">unexpected error</span>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer" style="flex-shrink:0;">
+        <p class="footer-text">&copy; 2026 Blog CMS API</p>
+    </footer>
+
+</body>
+</html>
