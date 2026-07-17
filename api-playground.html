@@ -33,6 +33,7 @@
                 <input id="authPass" type="password" placeholder="password" value="test123"
                     style="flex:1;min-width:120px;background:#0e100f;border:1px solid #2a2a2a;color:#fffce1;padding:8px 12px;border-radius:6px;font-size:13px;">
                 <button onclick="login()" style="background:#0ae448;color:#0e100f;border:none;padding:8px 20px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;">Login</button>
+                <button onclick="register()" style="background:transparent;color:#7c7c6f;border:1px solid #2a2a2a;padding:8px 20px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;">Register</button>
             </div>
         </div>
 
@@ -88,6 +89,20 @@
                 document.getElementById('authStatus').style.color = '#0ae448';
             } else {
                 document.getElementById('authStatus').textContent = 'Login failed';
+                document.getElementById('authStatus').style.color = '#ff4444';
+            }
+        }
+
+        async function register() {
+            const user = document.getElementById('authUser').value;
+            const pass = document.getElementById('authPass').value;
+            const { data } = await api('POST', '/api/auth/register', { username: user, email: user + '@test.com', password: pass, displayName: user });
+            if (data.token) {
+                token = data.token;
+                document.getElementById('authStatus').textContent = 'Registered & logged in as ' + data.user.username;
+                document.getElementById('authStatus').style.color = '#0ae448';
+            } else {
+                document.getElementById('authStatus').textContent = 'Register failed — user may already exist. Try Login.';
                 document.getElementById('authStatus').style.color = '#ff4444';
             }
         }
