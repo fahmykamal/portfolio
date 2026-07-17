@@ -108,7 +108,8 @@
         }
 
         const endpoints = [
-            { method: 'get',  path: '/api/posts',                    desc: 'List all posts',              auth: false },
+            { method: 'get',  path: '/api/posts',                    desc: 'List all posts',              auth: false, query: [{ key: 'published', val: 'true' }] },
+            { method: 'get',  path: '/api/auth/me',                 desc: 'Get current user',            auth: true  },
             { method: 'get',  path: '/api/posts/{slug}',             desc: 'Get post by slug',            auth: false, inputs: [{ key: 'slug', val: 'my-first-blog-post' }] },
             { method: 'post', path: '/api/posts',                    desc: 'Create a post',               auth: true,  bodyKey: 'postBody' },
             { method: 'put',  path: '/api/posts/{id}',               desc: 'Update a post',               auth: true,  inputs: [{ key: 'id', val: '1' }], bodyKey: 'postBody' },
@@ -118,7 +119,7 @@
             { method: 'delete', path: '/api/categories/{id}',        desc: 'Delete category',             auth: true,  inputs: [{ key: 'id', val: '1' }] },
             { method: 'get',  path: '/api/posts/{postId}/comments',  desc: 'Get comments for a post',     auth: false, inputs: [{ key: 'postId', val: '1' }] },
             { method: 'post', path: '/api/posts/{postId}/comments',  desc: 'Add comment to post',         auth: true,  inputs: [{ key: 'postId', val: '1' }], bodyKey: 'commentBody' },
-            { method: 'delete', path: '/api/comments/{id}',          desc: 'Delete a comment',            auth: true,  inputs: [{ key: 'id', val: '1' }] },
+            { method: 'delete', path: '/api/posts/{postId}/comments/{id}', desc: 'Delete a comment',    auth: true,  inputs: [{ key: 'postId', val: '1' }, { key: 'id', val: '1' }] },
         ];
 
         const bodies = {
@@ -142,6 +143,9 @@
                         ${ep.inputs ? ep.inputs.map(inp => `
                             <input class="ep-input" id="inp_${i}_${inp.key}" placeholder="${inp.key}" value="${inp.val}">
                         `).join('') : ''}
+                        ${ep.query ? ep.query.map(q => `
+                            <input class="ep-input" id="qry_${i}_${q.key}" placeholder="${q.key}" value="${q.val}">
+                        `).join('') : ''}
                         ${ep.bodyKey ? `<textarea class="ep-input" id="body_${i}" rows="4" style="resize:vertical;">${bodies[ep.bodyKey]}</textarea>` : ''}
                         <button class="ep-btn" id="btn_${i}" onclick="call(${i})">Send Request</button>
                         <pre class="ep-result" id="res_${i}"></pre>
@@ -164,6 +168,11 @@
                     const val = document.getElementById(`inp_${i}_${inp.key}`).value;
                     path = path.replace(`{${inp.key}}`, val);
                 });
+            }
+
+            if (ep.query) {
+                const params = ep.query.map(q => `${q.key}=${encodeURIComponent(document.getElementById(`qry_${i}_${q.key}`).value)}`).join('&');
+                if (params) path += '?' + params;
             }
 
             let body = null;
