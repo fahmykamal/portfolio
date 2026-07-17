@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog CMS API</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body class="landing" style="overflow:auto;padding:0;">
+
+    <nav class="nav" style="flex-shrink:0;">
+        <span class="nav-logo">blog cms api</span>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">&larr; back</a>
+        </div>
+    </nav>
+
+    <main style="flex:1;padding:2rem;max-width:900px;margin:0 auto;width:100%;position:relative;z-index:1;">
+
+        <h1 style="color:#fffce1;font-size:28px;margin:0 0 0.25rem;">API Playground</h1>
+        <p style="color:#7c7c6f;font-size:13px;margin:0 0 2rem;">
+            Base URL: <code style="color:#0ae448;background:#191919;padding:2px 8px;border-radius:4px;">https://blog-cms-api-iekn.onrender.com</code>
+        </p>
+
+        <div id="authBox" style="background:#191919;border-radius:12px;padding:1.25rem;margin-bottom:2rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                <span style="color:#fffce1;font-size:14px;font-weight:600;">Authentication</span>
+                <span id="authStatus" style="color:#7c7c6f;font-size:12px;">Not logged in</span>
+            </div>
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+                <input id="authUser" placeholder="username" value="ahmad"
+                    style="flex:1;min-width:120px;background:#0e100f;border:1px solid #2a2a2a;color:#fffce1;padding:8px 12px;border-radius:6px;font-size:13px;">
+                <input id="authPass" type="password" placeholder="password" value="test123"
+                    style="flex:1;min-width:120px;background:#0e100f;border:1px solid #2a2a2a;color:#fffce1;padding:8px 12px;border-radius:6px;font-size:13px;">
+                <button onclick="login()" style="background:#0ae448;color:#0e100f;border:none;padding:8px 20px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;">Login</button>
+            </div>
+        </div>
+
+        <div id="endpoints"></div>
+
+    </main>
+
+    <footer class="footer" style="flex-shrink:0;">
+        <p class="footer-text">&copy; 2026 Blog CMS API</p>
+    </footer>
+
+    <style>
+        .ep { background:#191919;border-radius:12px;margin-bottom:1rem;overflow:hidden; }
+        .ep-head { display:flex;align-items:center;gap:0.75rem;padding:1rem 1.25rem;cursor:pointer; }
+        .ep-head:hover { background:#1f1f1f; }
+        .ep-method { font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase; }
+        .ep-method.get { background:#0ae44820;color:#0ae448; }
+        .ep-method.post { background:#ff870920;color:#ff8709; }
+        .ep-method.put { background:#f7bdf820;color:#f7bdf8; }
+        .ep-method.delete { background:#ff444420;color:#ff4444; }
+        .ep-path { color:#fffce1;font-size:13px;font-family:monospace; }
+        .ep-desc { color:#7c7c6f;font-size:12px;margin-left:auto; }
+        .ep-body { display:none;padding:0 1.25rem 1.25rem; }
+        .ep.open .ep-body { display:block; }
+        .ep-input { width:100%;background:#0e100f;border:1px solid #2a2a2a;color:#fffce1;padding:8px 12px;border-radius:6px;font-size:13px;font-family:monospace;margin-bottom:0.5rem; }
+        .ep-btn { background:#0ae448;color:#0e100f;border:none;padding:8px 20px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;margin-top:0.5rem; }
+        .ep-btn:disabled { opacity:0.4;cursor:not-allowed; }
+        .ep-result { background:#0e100f;border:1px solid #2a2a2a;border-radius:6px;padding:0.75rem;margin-top:0.75rem;color:#0ae448;font-size:12px;font-family:monospace;white-space:pre-wrap;max-height:300px;overflow:auto;display:none; }
+    </style>
+
+    <script>
+        const BASE = 'https://blog-cms-api-iekn.onrender.com';
+        let token = null;
+
+        async function api(method, path, body) {
+            const opts = { method, headers: { 'Content-Type': 'application/json' } };
+            if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+            if (body) opts.body = JSON.stringify(body);
+            const res = await fetch(BASE + path, opts);
+            const text = await res.text();
+            let data = text;
+            try { data = JSON.parse(text); } catch {}
+            return { status: res.status, ok: res.ok, data };
+        }
+
+        async function login() {
+            const user = document.getElementById('authUser').value;
+            const pass = document.getElementById('authPass').value;
+            const { data } = await api('POST', '/api/auth/login', { username: user, password: pass });
+            if (data.token) {
+                token = data.token;
+                document.getElementById('authStatus').textContent = 'Logged in as ' + data.user.username;
+                document.getElementById('authStatus').style.color = '#0ae448';
+            } else {
+                document.getElementById('authStatus').textContent = 'Login failed';
+                document.getElementById('authStatus').style.color = '#ff4444';
+            }
+        }
+
+        const endpoints = [
+            { method: 'get',  path: '/api/posts',                    desc: 'List all posts',              auth: false },
+            { method: 'get',  path: '/api/posts/{slug}',             desc: 'Get post by slug',            auth: false, inputs: [{ key: 'slug', val: 'my-first-blog-post' }] },
+            { method: 'post', path: '/api/posts',                    desc: 'Create a post',               auth: true,  bodyKey: 'postBody' },
+            { method: 'put',  path: '/api/posts/{id}',               desc: 'Update a post',               auth: true,  inputs: [{ key: 'id', val: '1' }], bodyKey: 'postBody' },
+            { method: 'delete', path: '/api/posts/{id}',             desc: 'Delete a post',               auth: true,  inputs: [{ key: 'id', val: '1' }] },
+            { method: 'get',  path: '/api/categories',               desc: 'List categories',             auth: false },
+            { method: 'post', path: '/api/categories',               desc: 'Create category',             auth: true,  bodyKey: 'catBody' },
+            { method: 'delete', path: '/api/categories/{id}',        desc: 'Delete category',             auth: true,  inputs: [{ key: 'id', val: '1' }] },
+            { method: 'get',  path: '/api/posts/{postId}/comments',  desc: 'Get comments for a post',     auth: false, inputs: [{ key: 'postId', val: '1' }] },
+            { method: 'post', path: '/api/posts/{postId}/comments',  desc: 'Add comment to post',         auth: true,  inputs: [{ key: 'postId', val: '1' }], bodyKey: 'commentBody' },
+            { method: 'delete', path: '/api/comments/{id}',          desc: 'Delete a comment',            auth: true,  inputs: [{ key: 'id', val: '1' }] },
+        ];
+
+        const bodies = {
+            postBody: JSON.stringify({ title: 'Hello World', content: 'This is my first post.', excerpt: 'A short excerpt', isPublished: true, categoryId: 1, tagIds: [] }, null, 2),
+            catBody: JSON.stringify({ name: 'Technology' }, null, 2),
+            commentBody: JSON.stringify({ content: 'Great post!' }, null, 2),
+        };
+
+        function render() {
+            const container = document.getElementById('endpoints');
+            endpoints.forEach((ep, i) => {
+                const div = document.createElement('div');
+                div.className = 'ep';
+                div.innerHTML = `
+                    <div class="ep-head" onclick="this.parentElement.classList.toggle('open')">
+                        <span class="ep-method ${ep.method}">${ep.method}</span>
+                        <span class="ep-path">${ep.path}</span>
+                        <span class="ep-desc">${ep.desc} ${ep.auth ? '🔒' : ''}</span>
+                    </div>
+                    <div class="ep-body">
+                        ${ep.inputs ? ep.inputs.map(inp => `
+                            <input class="ep-input" id="inp_${i}_${inp.key}" placeholder="${inp.key}" value="${inp.val}">
+                        `).join('') : ''}
+                        ${ep.bodyKey ? `<textarea class="ep-input" id="body_${i}" rows="4" style="resize:vertical;">${bodies[ep.bodyKey]}</textarea>` : ''}
+                        <button class="ep-btn" id="btn_${i}" onclick="call(${i})">Send Request</button>
+                        <pre class="ep-result" id="res_${i}"></pre>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function call(i) {
+            const ep = endpoints[i];
+            const btn = document.getElementById('btn_' + i);
+            const res = document.getElementById('res_' + i);
+            btn.disabled = true;
+            btn.textContent = 'Loading...';
+
+            let path = ep.path;
+            if (ep.inputs) {
+                ep.inputs.forEach(inp => {
+                    const val = document.getElementById(`inp_${i}_${inp.key}`).value;
+                    path = path.replace(`{${inp.key}}`, val);
+                });
+            }
+
+            let body = null;
+            if (ep.bodyKey) {
+                try { body = JSON.parse(document.getElementById('body_' + i).value); } catch { body = {}; }
+            }
+
+            const { status, ok, data } = await api(ep.method.toUpperCase(), path, body);
+            res.style.display = 'block';
+            res.style.color = ok ? '#0ae448' : '#ff4444';
+            res.textContent = `Status: ${status}\n\n${JSON.stringify(data, null, 2)}`;
+            btn.disabled = false;
+            btn.textContent = 'Send Request';
+        }
+
+        render();
+
+        (async () => {
+            const { ok } = await api('POST', '/api/auth/login', { username: 'ahmad', password: 'test123' });
+            if (ok) {
+                document.getElementById('authUser').value = 'ahmad';
+                document.getElementById('authPass').value = 'test123';
+                await login();
+            }
+        })();
+    </script>
+</body>
+</html>
