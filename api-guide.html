@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog CMS API – Build Guide</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        body { display:flex; flex-direction:column; min-height:100vh; overflow:auto; }
+        .guide { max-width:860px; width:100%; margin:0 auto; padding:0 2rem 3rem; }
+        .guide h1 { color:#fffce1; font-size:28px; margin:0; }
+        .guide h2 { color:#fffce1; font-size:18px; margin:2.5rem 0 0 0; display:flex; align-items:center; gap:0.6rem; }
+        .guide h2 .step-num { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:#0ae44820; color:#0ae448; font-size:13px; font-weight:700; flex-shrink:0; }
+        .guide h3 { color:#fffce1; font-size:14px; margin:1.25rem 0 0.4rem; }
+        .guide p, .guide li { color:#7c7c6f; font-size:13px; line-height:1.7; }
+        .guide ul, .guide ol { padding-left:1.25rem; margin:0.4rem 0; }
+        .guide a { color:#0ae448; }
+        .code { display:block; background:#0e100f; border:1px solid #2a2a2a; border-radius:8px; padding:1rem; font-size:12.5px; line-height:1.7; white-space:pre; overflow-x:auto; font-family:"Courier New",monospace; color:#0ae448; margin:0.5rem 0; }
+        .code .cmt { color:#7c7c6f; }
+        .code .key { color:#f7bdf8; }
+        .code .str { color:#ff8709; }
+        .code .bool { color:#9d95ff; }
+        .tag { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:4px; text-transform:uppercase; letter-spacing:0.5px; }
+        .tag.csharp { background:#9d95ff20; color:#9d95ff; }
+        .tag.cli { background:#0ae44820; color:#0ae448; }
+        .tag.db { background:#ff870920; color:#ff8709; }
+        .tag.dep { background:#ff444420; color:#ff4444; }
+        .guide-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; padding-top:1.5rem; }
+        .card { background:#191919; border-radius:12px; padding:1.25rem; margin:1rem 0; }
+        .badge-dot { display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:6px; }
+        .badge-dot.green { background:#0ae448; }
+        .badge-dot.yellow { background:#ff8709; }
+    </style>
+</head>
+<body>
+
+    <nav class="nav" style="flex-shrink:0;">
+        <span class="nav-logo">blog cms api</span>
+        <div class="nav-links">
+            <a href="api-docs.html" class="nav-link">docs</a>
+            <a href="api-playground.html" class="nav-link">playground</a>
+            <a href="index.html" class="nav-link">&larr; back</a>
+        </div>
+    </nav>
+
+    <main class="guide">
+
+        <div class="guide-header">
+            <div>
+                <h1>Build Guide</h1>
+                <p style="color:#7c7c6f;font-size:13px;margin:0.25rem 0 0;">Blog CMS API — .NET 9 + MySQL + JWT</p>
+            </div>
+        </div>
+
+        <p style="color:#7c7c6f;font-size:13px;margin-bottom:2rem;">Step-by-step walkthrough of building this API from scratch. Repo: <a href="https://github.com/fahmykamal/blog-cms-api" target="_blank">github.com/fahmykamal/blog-cms-api</a></p>
+
+        <!-- ── Step 1 ── -->
+        <h2><span class="step-num">1</span> Project Setup</h2>
+        <div class="card">
+            <p><span class="tag cli">cli</span> Create a new .NET 9 Web API project:</p>
+            <div class="code">dotnet new webapi -n BlogCMS.Api
+cd BlogCMS.Api</div>
+
+            <p><span class="tag dep">package</span> Add required NuGet packages:</p>
+            <div class="code">dotnet add package Pomelo.EntityFrameworkCore.MySql --version 9.0.0
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer --version 9.0.0
+dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection --version 12.0.1
+dotnet add package BCrypt.Net-Next --version 4.2.0
+dotnet add package Microsoft.EntityFrameworkCore.Design --version 9.0.0</div>
+
+            <p><span class="tag csharp">file</span> <strong>appsettings.json</strong> — configure connection string + JWT:</p>
+            <div class="code">{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=gateway01.ap-southeast-1.prod.aws.tidbcloud.com;Port=4000;Database=blogcms;User=...;Password=...;SslMode=VerifyFull;"
+  },
+  "Jwt": {
+    "Key": "your-256-bit-secret-key-here",
+    "Issuer": "BlogCMS",
+    "Audience": "BlogCMS.Client"
+  }
+}</div>
+        </div>
+
+        <!-- ── Step 2 ── -->
+        <h2><span class="step-num">2</span> Models</h2>
+        <div class="card">
+            <p>Create the domain models under <strong>Models/</strong>. These map to database tables via EF Core.</p>
+
+            <h3>User</h3>
+            <div class="code">public class User
+{
+    public int Id { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    public string DisplayName { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}</div>
+
+            <h3>Post</h3>
+            <div class="code">public class Post
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Slug { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public string? Excerpt { get; set; }
+    public string? FeaturedImageUrl { get; set; }
+    public bool IsPublished { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? PublishedAt { get; set; }
+
+    public int AuthorId { get; set; }
+    public User Author { get; set; } = null!;
+    public int CategoryId { get; set; }
+    public Category Category { get; set; } = null!;
+    public ICollection&lt;PostTag&gt; Tags { get; set; } = new List&lt;PostTag&gt;();
+    public ICollection&lt;Comment&gt; Comments { get; set; } = new List&lt;Comment&gt;();
+}</div>
+
+            <h3>Category</h3>
+            <div class="code">public class Category
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Slug { get; set; } = string.Empty;
+}</div>
+
+            <h3>Comment</h3>
+            <div class="code">public class Comment
+{
+    public int Id { get; set; }
+    public string Content { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public int PostId { get; set; }
+    public Post Post { get; set; } = null!;
+    public int AuthorId { get; set; }
+    public User Author { get; set; } = null!;
+}</div>
+
+            <h3>Tag &amp; PostTag</h3>
+            <div class="code">public class Tag
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Slug { get; set; } = string.Empty;
+}
+
+public class PostTag
+{
+    public int PostId { get; set; }
+    public Post Post { get; set; } = null!;
+    public int TagId { get; set; }
+    public Tag Tag { get; set; } = null!;
+}</div>
+        </div>
+
+        <!-- ── Step 3 ── -->
+        <h2><span class="step-num">3</span> DbContext</h2>
+        <div class="card">
+            <p><span class="tag csharp">file</span> <strong>Data/AppDbContext.cs</strong> — register all entities and configure relationships:</p>
+            <div class="code">public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions&lt;AppDbContext&gt; opts) : base(opts) { }
+
+    public DbSet&lt;User&gt; Users =&gt; Set&lt;User&gt;();
+    public DbSet&lt;Post&gt; Posts =&gt; Set&lt;Post&gt;();
+    public DbSet&lt;Category&gt; Categories =&gt; Set&lt;Category&gt;();
+    public DbSet&lt;Comment&gt; Comments =&gt; Set&lt;Comment&gt;();
+    public DbSet&lt;Tag&gt; Tags =&gt; Set&lt;Tag&gt;();
+    public DbSet&lt;PostTag&gt; PostTags =&gt; Set&lt;PostTag&gt;();
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity&lt;PostTag&gt;()
+            .HasKey(pt =&gt; new { pt.PostId, pt.TagId });
+
+        builder.Entity&lt;Post&gt;()
+            .HasIndex(p =&gt; p.Slug).IsUnique();
+
+        builder.Entity&lt;Category&gt;()
+            .HasIndex(c =&gt; c.Slug).IsUnique();
+    }
+}</div>
+
+            <p><span class="tag cli">cli</span> Create and apply the initial migration:</p>
+            <div class="code">dotnet ef migrations add InitialCreate
+dotnet ef database update</div>
+        </div>
+
+        <!-- ── Step 4 ── -->
+        <h2><span class="step-num">4</span> DTOs &amp; AutoMapper</h2>
+        <div class="card">
+            <p><span class="tag csharp">file</span> <strong>DTOs/</strong> — request/response classes shape the API contract:</p>
+            <div class="code">// PostDtos.cs
+public class PostRequest
+{
+    public string Title { get; set; } = "";
+    public string Content { get; set; } = "";
+    public string? Excerpt { get; set; }
+    public string? FeaturedImageUrl { get; set; }
+    public bool IsPublished { get; set; }
+    public int CategoryId { get; set; }
+    public List&lt;int&gt; TagIds { get; set; } = new();
+}
+
+public class PostResponse { /* full post with author, category, tags, comments */ }
+public class PostSummaryResponse { /* list-friendly subset */ }
+
+// AuthDtos.cs — RegisterRequest, LoginRequest, AuthResponse
+// CategoryDtos.cs — CategoryRequest, CategoryDto
+// CommentDtos.cs — CommentRequest, CommentResponse</div>
+
+            <p><span class="tag csharp">file</span> <strong>Profiles/MappingProfile.cs</strong> — define AutoMapper mappings:</p>
+            <div class="code">public class MappingProfile : Profile
+{
+    public MappingProfile()
+    {
+        CreateMap&lt;Post, PostResponse&gt;();
+        CreateMap&lt;Post, PostSummaryResponse&gt;();
+        CreateMap&lt;Category, CategoryDto&gt;();
+        CreateMap&lt;Comment, CommentResponse&gt;();
+        CreateMap&lt;User, AuthorDto&gt;();
+        CreateMap&lt;Tag, TagDto&gt;();
+    }
+}</div>
+        </div>
+
+        <!-- ── Step 5 ── -->
+        <h2><span class="step-num">5</span> Auth Service (JWT)</h2>
+        <div class="card">
+            <p><span class="tag csharp">file</span> <strong>Services/AuthService.cs</strong> — handles registration, login, and JWT token generation:</p>
+            <div class="code">public class AuthService : IAuthService
+{
+    private readonly AppDbContext _db;
+    private readonly IConfiguration _config;
+
+    public async Task&lt;AuthResponse&gt; RegisterAsync(RegisterRequest request)
+    {
+        if (await _db.Users.AnyAsync(u =&gt; u.Username == request.Username))
+            throw new InvalidOperationException("Username already taken.");
+
+        var user = new User
+        {
+            Username = request.Username,
+            Email = request.Email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            DisplayName = request.DisplayName,
+        };
+        _db.Users.Add(user);
+        await _db.SaveChangesAsync();
+
+        return new AuthResponse
+        {
+            Token = GenerateJwt(user),
+            ExpiresAt = DateTime.UtcNow.AddDays(1),
+            User = _mapper.Map&lt;UserDto&gt;(user),
+        };
+    }
+
+    // LoginAsync: validate credentials with BCrypt.Verify(), throw UnauthorizedAccessException on failure
+    // GenerateJwt: create a JWT with NameIdentifier + Name claims, 1-day expiry
+}</div>
+
+            <p>The <strong>GenerateJwt</strong> method creates a token using <code>SymmetricSecurityKey</code> and <code>SigningCredentials</code> with the key from <code>appsettings.json</code>.</p>
+        </div>
+
+        <!-- ── Step 6 ── -->
+        <h2><span class="step-num">6</span> Business Services</h2>
+        <div class="card">
+
+            <h3>PostService</h3>
+            <div class="code">public class PostService : IPostService
+{
+    private readonly AppDbContext _db;
+    private readonly IMapper _mapper;
+
+    // GetAllAsync — query with Include (Author, Category, Tags, Comments),
+    //               filter by publishedOnly, order by PublishedAt desc
+
+    // GetBySlugAsync — FirstOrDefault with all Includes
+
+    // CreateAsync — validate unique slug, validate CategoryId exists,
+    //               create Post, attach Tags, SaveChangesAsync
+
+    // UpdateAsync — find post, validate CategoryId, update fields,
+    //               replace tags, SaveChangesAsync
+
+    // DeleteAsync — FindAsync, Remove, SaveChangesAsync
+
+    // GenerateSlug — lowercase, replace spaces with hyphens, strip special chars
+}</div>
+
+            <h3>CategoryService</h3>
+            <div class="code">// GetAllAsync — list ordered by Name
+// CreateAsync — generate slug from name, check for duplicates
+// DeleteAsync — FindAsync, Remove, SaveChangesAsync</div>
+
+            <h3>CommentService</h3>
+            <div class="code">// GetByPostIdAsync — filter by PostId, order by CreatedAt desc
+// CreateAsync — validate PostId exists, create Comment, SaveChangesAsync
+// DeleteAsync — FindAsync, Remove, SaveChangesAsync</div>
+
+            <p>All services follow the <strong>interface + implementation</strong> pattern (<code>IPostService</code>, <code>ICategoryService</code>, <code>ICommentService</code>) and are registered in DI.</p>
+        </div>
+
+        <!-- ── Step 7 ── -->
+        <h2><span class="step-num">7</span> Controllers</h2>
+        <div class="card">
+            <p>Controllers handle HTTP requests, call services, and return <code>IActionResult</code>. Each is decorated with <code>[ApiController]</code> and <code>[Route("api/[controller]")]</code>.</p>
+
+            <h3>PostsController</h3>
+            <div class="code">[ApiController]
+[Route("api/[controller]")]
+public class PostsController : ControllerBase
+{
+    [HttpGet]        // GET /api/posts?published=true
+    [HttpGet("{slug}")]  // GET /api/posts/{slug}
+    [HttpPost]       // [Authorize] POST /api/posts
+    [HttpPut("{id}")]    // [Authorize] PUT /api/posts/{id}
+    [HttpDelete("{id}")] // [Authorize] DELETE /api/posts/{id}
+}</div>
+
+            <p>Key patterns:</p>
+            <ul>
+                <li>Protected endpoints use <code>[Authorize]</code> attribute</li>
+                <li>Auth endpoints extract <code>UserId</code> from JWT claims via <code>User.FindFirstValue(ClaimTypes.NameIdentifier)</code></li>
+                <li>Service-layer exceptions (<code>KeyNotFoundException</code>, <code>InvalidOperationException</code>) return user-friendly JSON via controller try/catch or global middleware</li>
+                <li>Empty <code>NotFound()</code> replaced with <code>NotFound(new { error = "..." })</code> for descriptive messages</li>
+            </ul>
+        </div>
+
+        <!-- ── Step 8 ── -->
+        <h2><span class="step-num">8</span> Program.cs — Middleware &amp; DI</h2>
+        <div class="card">
+            <p><span class="tag csharp">file</span> <strong>Program.cs</strong> wires everything together:</p>
+            <div class="code">var builder = WebApplication.CreateBuilder(args);
+
+// 1. DbContext — MySQL with Pomelo
+builder.Services.AddDbContext&lt;AppDbContext&gt;(options =&gt;
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0))));
+
+// 2. JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =&gt; { /* configure TokenValidationParameters */ });
+builder.Services.AddAuthorization();
+
+// 3. AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
+
+// 4. DI — register services
+builder.Services.AddScoped&lt;IAuthService, AuthService&gt;();
+builder.Services.AddScoped&lt;IPostService, PostService&gt;();
+builder.Services.AddScoped&lt;ICategoryService, CategoryService&gt;();
+builder.Services.AddScoped&lt;ICommentService, CommentService&gt;();
+
+builder.Services.AddControllers();
+var app = builder.Build();
+
+// 5. Auto-migrate on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService&lt;AppDbContext&gt;();
+    db.Database.Migrate();
+}
+
+// 6. CORS raw middleware — sets headers before every response,
+//    handles OPTIONS preflight, catches exceptions
+app.Use(async (ctx, next) =&gt;
+{
+    ctx.Response.Headers["Access-Control-Allow-Origin"] = "*";
+    ctx.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+    ctx.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
+
+    if (ctx.Request.Method == "OPTIONS") { ctx.Response.StatusCode = 204; return; }
+
+    try { await next(); }
+    catch (Exception ex)
+    {
+        ctx.Response.Headers["Access-Control-Allow-Origin"] = "*";
+        ctx.Response.ContentType = "application/json; charset=utf-8";
+        ctx.Response.StatusCode = ex switch
+        {
+            KeyNotFoundException =&gt; 404,
+            InvalidOperationException =&gt; 409,
+            _ =&gt; 500,
+        };
+        var msg = ex is KeyNotFoundException or InvalidOperationException
+            ? ex.Message : "An unexpected error occurred.";
+        await ctx.Response.WriteAsJsonAsync(new { error = msg });
+    }
+});
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();</div>
+        </div>
+
+        <!-- ── Step 9 ── -->
+        <h2><span class="step-num">9</span> Database — TiDB Cloud</h2>
+        <div class="card">
+            <p><span class="tag db">db</span> This API uses <a href="https://tidbcloud.com" target="_blank">TiDB Cloud</a> for a free MySQL-compatible database:</p>
+            <ol>
+                <li>Create a free TiDB Cloud account and start a Serverless cluster</li>
+                <li>Go to <strong>Connect</strong> → copy the connection string (user, password, host, port)</li>
+                <li>Create a database named <code>blogcms</code></li>
+                <li>Update <code>appsettings.json</code> with the connection string</li>
+                <li>Run <code>dotnet ef database update</code> to apply migrations</li>
+            </ol>
+            <p>Alternatively, use any MySQL 8.0 instance (local, Aiven, PlanetScale, etc.).</p>
+        </div>
+
+        <!-- ── Step 10 ── -->
+        <h2><span class="step-num">10</span> Deployment — Render</h2>
+        <div class="card">
+            <p><span class="tag cli">deploy</span> The API is deployed on <a href="https://render.com" target="_blank">Render</a> (free tier):</p>
+            <ol>
+                <li>Push the project to a GitHub repo (<code>fahmykamal/blog-cms-api</code>)</li>
+                <li>In Render dashboard → <strong>New +</strong> → <strong>Web Service</strong></li>
+                <li>Connect the GitHub repo</li>
+                <li>Configure:
+                    <ul>
+                        <li>Name: <code>blog-cms-api</code></li>
+                        <li>Runtime: <code>.NET 9</code></li>
+                        <li>Build Command: <code>dotnet restore &amp;&amp; dotnet publish -c Release -o out</code></li>
+                        <li>Start Command: <code>dotnet out/BlogCMS.Api.dll</code></li>
+                        <li>Add environment variables: <code>ConnectionStrings__DefaultConnection</code>, <code>Jwt__Key</code>, etc.</li>
+                    </ul>
+                </li>
+                <li>Deploy — Render auto-builds and hosts at <code>https://blog-cms-api-iekn.onrender.com</code></li>
+            </ol>
+
+            <p style="margin-top:1rem;"><span class="tag db">note</span> TiDB Cloud's free tier may spin down after 5 minutes of inactivity. The first request after idle will have a ~5s cold start while the DB wakes up.</p>
+        </div>
+
+        <!-- ── Step 11 ── -->
+        <h2><span class="step-num">11</span> CORS &amp; Frontend</h2>
+        <div class="card">
+            <p>The API playground lives on GitHub Pages (<code>fahmykamal.github.io</code>). CORS is handled by the raw middleware in <strong>Program.cs</strong> (step 8).</p>
+            <p>Key things we learned:</p>
+            <ul>
+                <li><span class="badge-dot green"></span> CORS headers must be set <em>before</em> <code>app.UseAuthentication()</code></li>
+                <li><span class="badge-dot green"></span> OPTIONS preflight must be handled explicitly (return 204)</li>
+                <li><span class="badge-dot green"></span> Exception middleware must re-add CORS headers on error responses</li>
+                <li><span class="badge-dot yellow"></span> A 500 error (e.g. FK violation) can look like a CORS error in the browser when headers are missing</li>
+            </ul>
+        </div>
+
+        <!-- ── Step 12 ── -->
+        <h2><span class="step-num">12</span> GitHub Actions (CI)</h2>
+        <div class="card">
+            <p><span class="tag cli">ci</span> Optional: add a GitHub Actions workflow to build and test on every push:</p>
+            <div class="code"># .github/workflows/ci.yml
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+      - run: dotnet restore
+      - run: dotnet build --no-restore
+      - run: dotnet test --no-build</div>
+        </div>
+
+    </main>
+
+    <footer class="footer" style="flex-shrink:0;">
+        <p class="footer-text">&copy; 2026 Blog CMS API</p>
+    </footer>
+
+</body>
+</html>
