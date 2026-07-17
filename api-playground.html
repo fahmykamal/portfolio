@@ -180,15 +180,6 @@
         }
 
         render();
-
-        (async () => {
-            const { ok } = await api('POST', '/api/auth/login', { username: 'ahmad', password: 'test123' });
-            if (ok) {
-                document.getElementById('authUser').value = 'ahmad';
-                document.getElementById('authPass').value = 'test123';
-                await login();
-            }
-        })();
     </script>
 </body>
 </html>
