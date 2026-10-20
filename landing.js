@@ -4,8 +4,7 @@ gsap.timeline({ defaults: { ease: "power3.out" } })
     .from(".nav", { y: -30, opacity: 0, duration: 0.6 })
     .from("#heroGreeting", { y: 30, opacity: 0, duration: 0.5 })
     .from("#heroName", { y: 40, opacity: 0, duration: 0.6 })
-    .from("#heroTagline", { y: 30, opacity: 0, duration: 0.5 })
-    .from(".hero-cta", { y: 20, opacity: 0, duration: 0.4 });
+    .from("#heroTagline", { y: 30, opacity: 0, duration: 0.5 });
 
 SA(".bg-floats span").forEach((el) => {
     gsap.set(el, {
@@ -23,3 +22,29 @@ SA(".bg-floats span").forEach((el) => {
         ease: "power1.inOut",
     });
 });
+
+const cards = SA(".project-card");
+const countEl = document.getElementById("projectsCount");
+
+if (countEl) {
+    countEl.textContent = String(cards.length).padStart(2, "0");
+}
+
+if (cards.length) {
+    gsap.from(".projects-head", {
+        scrollTrigger: { trigger: ".projects", start: "top 80%" },
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+        ease: "power3.out",
+    });
+
+    gsap.from(cards, {
+        scrollTrigger: { trigger: ".projects-grid", start: "top 85%" },
+        y: 40,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power3.out",
+    });
+}

@@ -25,7 +25,6 @@
         <span class="nav-logo">portfolio</span>
         <div class="nav-links">
             <a href="notes.html" class="nav-link">notes</a>
-            <a href="url-shortener.html" class="nav-link">projects</a>
             <a href="api-guide.html" class="nav-link">guide</a>
             <a href="api-docs.html" class="nav-link">docs</a>
             <a href="api-playground.html" class="nav-link">api</a>
@@ -36,17 +35,73 @@
         <p class="hero-greeting" id="heroGreeting">hi, i'm</p>
         <h1 class="hero-name" id="heroName">Ahmad Fahmi</h1>
         <p class="hero-tagline" id="heroTagline">a full-stack developer</p>
-        <a href="api-playground.html" class="hero-cta">try my blog api &rarr;</a>
-        <a href="url-shortener.html" class="hero-cta" style="background:transparent;color:#7c7c6f;border:1px solid #2a2a2a;margin-left:0.75rem;">my url shortener</a>
-        <a href="notes.html" class="hero-cta" style="background:transparent;color:#7c7c6f;border:1px solid #2a2a2a;margin-left:0.75rem;">gsap notes</a>
     </main>
+
+    <section class="projects" id="projects">
+        <div class="projects-head">
+            <h2 class="projects-title">
+                <span class="brace">{</span>
+                projects
+                <span class="brace">}</span>
+            </h2>
+            <span class="projects-count" id="projectsCount">0</span>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid">
+
+            <a class="project-card" href="url-shortener.html" data-accent="green">
+                <span class="project-glow" aria-hidden="true"></span>
+                <span class="project-top">
+                    <span class="project-tag">backend / infra</span>
+                    <span class="project-dot"></span>
+                </span>
+                <span class="project-name">URL Shortener</span>
+                <span class="project-desc">Self-hosted ASP.NET Core 9 API with Redis, rate limiting, Docker, and GitHub Actions CI/CD.</span>
+                <span class="project-stack">
+                    <em>.NET 9</em><em>Redis</em><em>Docker</em><em>Caddy</em>
+                </span>
+                <span class="project-cta">view details &rarr;</span>
+            </a>
+
+            <a class="project-card" href="api-playground.html" data-accent="pink">
+                <span class="project-glow" aria-hidden="true"></span>
+                <span class="project-top">
+                    <span class="project-tag">backend / api</span>
+                    <span class="project-dot"></span>
+                </span>
+                <span class="project-name">Blog API</span>
+                <span class="project-desc">REST API with auth, posts and comments, plus a live playground and interactive docs.</span>
+                <span class="project-stack">
+                    <em>Node</em><em>Express</em><em>SQL</em>
+                </span>
+                <span class="project-cta">open playground &rarr;</span>
+            </a>
+
+            <a class="project-card" href="notes.html" data-accent="purple">
+                <span class="project-glow" aria-hidden="true"></span>
+                <span class="project-top">
+                    <span class="project-tag">frontend / animation</span>
+                    <span class="project-dot"></span>
+                </span>
+                <span class="project-name">GSAP Notes</span>
+                <span class="project-desc">An interactive gallery of GSAP techniques with live, draggable demos and code.</span>
+                <span class="project-stack">
+                    <em>GSAP</em><em>JS</em><em>CSS</em>
+                </span>
+                <span class="project-cta">explore &rarr;</span>
+            </a>
+
+            <!-- add new project cards here -->
+
+        </div>
+    </section>
 
     <footer class="footer">
         <p class="footer-text">&copy; 2026 Ahmad Fahmi</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
     <script src="landing.js"></script>
 </body>
 </html>
-

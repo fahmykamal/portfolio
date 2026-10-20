@@ -268,7 +268,7 @@ body.landing {
     min-height: 100vh;
     padding: 0;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
     }
 
 .bg-floats {
@@ -335,6 +335,7 @@ body.landing {
     padding: 2rem;
     position: relative;
     z-index: 1;
+    min-height: 70vh;
     }
 
 .hero-greeting {
@@ -373,6 +374,181 @@ body.landing {
 
 .hero-cta:hover {
     transform: scale(1.05);
+    }
+
+/* ── Projects ─────────────────────────────────── */
+
+.projects {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 3rem 4rem;
+    }
+
+.projects-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    }
+
+.projects-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #fffce1;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+    }
+
+.projects-count {
+    color: #0ae448;
+    font-size: 12px;
+    font-family: "Courier New", monospace;
+    border: 1px solid #2a2a2a;
+    border-radius: 99px;
+    padding: 0.15rem 0.7rem;
+    }
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+    }
+
+.project-card {
+    --accent: #0ae448;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: #141514;
+    border: 1px solid #232323;
+    border-radius: 18px;
+    padding: 1.75rem;
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+.project-card[data-accent="pink"]   { --accent: #ff96f9; }
+.project-card[data-accent="purple"] { --accent: #9d95ff; }
+.project-card[data-accent="orange"] { --accent: #ff8709; }
+
+.project-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--accent), transparent 55%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+    }
+
+.project-card:hover {
+    transform: translateY(-4px);
+    border-color: #2f2f2f;
+    }
+
+.project-card:hover::before {
+    opacity: 1;
+    }
+
+.project-glow {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: var(--accent);
+    filter: blur(70px);
+    opacity: 0.08;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    }
+
+.project-card:hover .project-glow {
+    opacity: 0.18;
+    }
+
+.project-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    }
+
+.project-tag {
+    color: #7c7c6f;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    }
+
+.project-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    }
+
+.project-name {
+    color: #fffce1;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    }
+
+.project-desc {
+    color: #9a9a8c;
+    font-size: 13px;
+    line-height: 1.6;
+    flex: 1;
+    }
+
+.project-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    }
+
+.project-stack em {
+    font-style: normal;
+    color: #cfcfc0;
+    font-size: 11px;
+    font-family: "Courier New", monospace;
+    background: #0e100f;
+    border: 1px solid #262626;
+    border-radius: 6px;
+    padding: 0.2rem 0.55rem;
+    }
+
+.project-cta {
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 0.25rem;
+    opacity: 0.75;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+.project-card:hover .project-cta {
+    opacity: 1;
+    transform: translateX(3px);
     }
 
 /* ── Showcase / tech-stack page ──────────────── */
