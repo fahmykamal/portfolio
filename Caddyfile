@@ -1,15 +1,12 @@
-# No domain yet — serve on plain HTTP for any host (IP access).
-# When the domain exists, replace this block with the two blocks below.
-:80 {
+fahmykamal.site {
 	root * /site
 	file_server
 }
 
-# yourname.dev {
-# 	root * /site
-# 	file_server
-# }
-#
-# short.yourname.dev {
-# 	reverse_proxy host.docker.internal:5076
-# }
+www.fahmykamal.site {
+	redir https://fahmykamal.site{uri} permanent
+}
+
+short.fahmykamal.site {
+	reverse_proxy host.docker.internal:5076
+}
