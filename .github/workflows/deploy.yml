@@ -36,4 +36,13 @@ jobs:
             git pull --ff-only origin main
             docker compose up -d --build
             docker image prune -f
-            curl -sf -o /dev/null http://localhost:80/ && echo "site healthy"
+            for i in $(seq 1 30); do
+              if curl -sf -o /dev/null http://localhost:80/; then
+                echo "site healthy"
+                exit 0
+              fi
+              sleep 2
+            done
+            echo "health check failed after 60s"
+            docker compose logs --tail=30
+            exit 1
