@@ -1,4 +1,7 @@
 fahmykamal.site {
+	@index path /index.html
+	redir @index / permanent
+
 	root * /site
 	file_server
 }
