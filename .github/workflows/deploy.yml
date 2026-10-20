@@ -20,12 +20,16 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
+      - name: Write SSH key
+        run: |
+          echo "${{ secrets.VM_SSH_KEY_B64 }}" | base64 -d > key
+          chmod 600 key
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1
         with:
           host: 35.198.220.87
           username: fahmykamal96
-          key: ${{ secrets.VM_SSH_KEY }}
+          key_path: key
           script: |
             set -e
             cd ~/portfolio
