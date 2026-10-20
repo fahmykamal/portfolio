@@ -1,0 +1,8 @@
+.git
+.github
+.gitignore
+.nojekyll
+README.md
+Dockerfile
+docker-compose.yml
+Caddyfile
