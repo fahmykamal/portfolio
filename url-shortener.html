@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener — Tech Stack</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="gallery">
+        <div class="gallery-header">
+            <div class="gallery-title">
+                <span class="brace">{</span>
+                url shortener
+                <span class="brace">}</span>
+            </div>
+            <a href="index.html" class="back-link">&larr; back</a>
+        </div>
+
+        <p class="showcase-intro">
+            A self-hosted URL shortener running on a single GCP VM.
+            Shorten, redirect, and track clicks via a stateless ASP.NET Core API backed by Redis.
+            <a href="https://short.fahmykamal.site" target="_blank" rel="noopener">try it &rarr;</a>
+        </p>
+
+        <ul class="gallery-grid">
+            <li class="gallery-card stack-card">
+                <span class="card-label">ASP.NET Core 9</span>
+                <span class="card-desc">minimal API, controllers</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Redis 7</span>
+                <span class="card-desc">atomic SET NX, TTL, click counts</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Docker</span>
+                <span class="card-desc">multi-stage build, non-root</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Caddy</span>
+                <span class="card-desc">auto HTTPS, reverse proxy</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">GitHub Actions</span>
+                <span class="card-desc">build gate + SSH deploy</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">GCP Compute</span>
+                <span class="card-desc">Ubuntu VM, custom VPC, static IP</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Rate limiting</span>
+                <span class="card-desc">10 req/min per IP → 429</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Forwarded headers</span>
+                <span class="card-desc">correct scheme/host behind proxy</span>
+            </li>
+        </ul>
+
+        <div class="showcase-notes">
+            <h2 class="showcase-h2">how it works</h2>
+            <ul class="showcase-list">
+                <li><strong>POST /shorten</strong> — validates an absolute http/https URL (or a custom code matching <code>^[A-Za-z0-9_-]{1,32}$</code>), generates a code, stores <code>url:&lt;code&gt;</code> in Redis with an optional TTL.</li>
+                <li><strong>GET /&lt;code&gt;</strong> — looks up the target and issues a 302 redirect, incrementing the click counter.</li>
+                <li><strong>GET /stats/&lt;code&gt;</strong> — returns metadata and the click count.</li>
+                <li>Generated codes are a SHA-256 prefix reserved atomically with <code>SET NX</code>; on collision the prefix extends (7&ndash;64 chars).</li>
+            </ul>
+
+            <h2 class="showcase-h2">deployment</h2>
+            <ul class="showcase-list">
+                <li>Single VM runs two containers: the API and Redis, gated by a Redis healthcheck.</li>
+                <li>Caddy terminates TLS and reverse-proxies <code>short.fahmykamal.site</code> to the API; certificates are issued and renewed automatically.</li>
+                <li>Pushes to <code>main</code> run CI (compose validate + image build), then deploy over SSH only after the build passes.</li>
+                <li>The API trusts proxy headers so generated short URLs are correct behind Caddy.</li>
+            </ul>
+
+            <h2 class="showcase-h2">stack</h2>
+            <ul class="showcase-list tags">
+                <li>C# 13 / .NET 9</li>
+                <li>ASP.NET Core</li>
+                <li>StackExchange.Redis</li>
+                <li>Docker &amp; Compose</li>
+                <li>Caddy</li>
+                <li>GitHub Actions</li>
+                <li>Google Cloud Platform</li>
+                <li>Let's Encrypt</li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -375,6 +375,99 @@ body.landing {
     transform: scale(1.05);
     }
 
+/* ── Showcase / tech-stack page ──────────────── */
+
+.showcase-intro {
+    color: #7c7c6f;
+    font-size: 15px;
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0 0 2.5rem;
+    }
+
+.showcase-intro a {
+    color: #0ae448;
+    text-decoration: none;
+    font-weight: 600;
+    }
+
+.showcase-intro a:hover {
+    text-decoration: underline;
+    }
+
+.stack-card {
+    aspect-ratio: auto;
+    min-height: 120px;
+    justify-content: center;
+    }
+
+.showcase-notes {
+    margin-top: 3rem;
+    max-width: 720px;
+    }
+
+.showcase-h2 {
+    color: #fffce1;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 2.5rem 0 1rem;
+    }
+
+.showcase-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    }
+
+.showcase-list li {
+    color: #9a9a8c;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 0.6rem 0 0.6rem 1.25rem;
+    position: relative;
+    border-bottom: 1px solid #1c1c1c;
+    }
+
+.showcase-list li::before {
+    content: "\2192";
+    position: absolute;
+    left: 0;
+    color: #0ae448;
+    }
+
+.showcase-list strong {
+    color: #fffce1;
+    }
+
+.showcase-list code {
+    background: #242424;
+    color: #abff84;
+    padding: 0.1rem 0.4rem;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: "Courier New", monospace;
+    }
+
+.showcase-list.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    }
+
+.showcase-list.tags li {
+    border: 1px solid #2a2a2a;
+    border-radius: 99px;
+    padding: 0.4rem 1rem;
+    font-size: 12px;
+    color: #fffce1;
+    }
+
+.showcase-list.tags li::before {
+    content: none;
+    }
+
 /* ── Notes page back link ────────────────────── */
 
 .back-link {
