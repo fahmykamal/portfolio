@@ -13,3 +13,13 @@ www.fahmykamal.site {
 short.fahmykamal.site {
 	reverse_proxy host.docker.internal:5076
 }
+
+# The dashboard app is password protected: its API lets anyone sign up, so the
+# gate is in front of the whole site rather than inside the app.
+# Rotate with: docker run --rm portfolio-caddy:latest caddy hash-password --plaintext "<password>"
+dashboard.fahmykamal.site {
+	basic_auth {
+		admin $2a$14$xfBWyq3yRLLbLi.8bKnxqulGYMyMwKiJaJuCYkmRgdaaetlPtXSAq
+	}
+	reverse_proxy host.docker.internal:8081
+}

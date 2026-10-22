@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Tech Stack</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="gallery">
+        <div class="gallery-header">
+            <div class="gallery-title">
+                <span class="brace">{</span>
+                dashboard
+                <span class="brace">}</span>
+            </div>
+            <a href="index.html" class="back-link">&larr; back</a>
+        </div>
+
+        <p class="showcase-intro">
+            A self-hosted dashboard builder running on the same GCP VM.
+            Upload a spreadsheet, pick the columns, and the app turns them into interactive charts.
+            <a href="https://dashboard.fahmykamal.site" target="_blank" rel="noopener">try it &rarr;</a>
+        </p>
+
+        <ul class="gallery-grid">
+            <li class="gallery-card stack-card">
+                <span class="card-label">FastAPI</span>
+                <span class="card-desc">REST API, server-side sessions</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">React 19</span>
+                <span class="card-desc">Vite, TanStack Query, Zustand</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">ECharts 6</span>
+                <span class="card-desc">bar, line, scatter, KPI, table</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">DuckDB + PyArrow</span>
+                <span class="card-desc">queries over Parquet</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Messy spreadsheets</span>
+                <span class="card-desc">header sniffing, type inference</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Drag &amp; resize grid</span>
+                <span class="card-desc">react-grid-layout, saved layouts</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">SQLite</span>
+                <span class="card-desc">metadata, sessions, audit log</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Docker</span>
+                <span class="card-desc">API + nginx, named volume</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Caddy</span>
+                <span class="card-desc">auto HTTPS, basic auth, reverse proxy</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">GitHub Actions</span>
+                <span class="card-desc">build gate + SSH deploy</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Puppeteer tests</span>
+                <span class="card-desc">real browser, real charts</span>
+            </li>
+            <li class="gallery-card stack-card">
+                <span class="card-label">Tenant isolation</span>
+                <span class="card-desc">every query scoped to a workspace</span>
+            </li>
+        </ul>
+
+        <div class="showcase-notes">
+            <h2 class="showcase-h2">how it works</h2>
+            <ul class="showcase-list">
+                <li><strong>Upload</strong> — the workbook is sniffed for sheets, header rows and column types; the user confirms what to import, then the sheet is stored as Parquet.</li>
+                <li><strong>Build</strong> — a widget is a dataset, a sheet, a chart type and a set of axes. The API validates every widget against the sheet's schema and refuses a dashboard that cannot render.</li>
+                <li><strong>Query</strong> — each widget runs its own DuckDB query, so changing one chart does not refetch the whole dashboard.</li>
+                <li><strong>Arrange</strong> — the canvas is a drag-and-resize grid; positions and sizes are saved with the dashboard document.</li>
+            </ul>
+
+            <h2 class="showcase-h2">deployment</h2>
+            <ul class="showcase-list">
+                <li>The VM runs the API and the built frontend as two containers; nginx serves the SPA and proxies <code>/api</code> to the API on the internal network.</li>
+                <li>Caddy terminates TLS and reverse-proxies <code>dashboard.fahmykamal.site</code> to it. The site sits behind a password, because the API's sign-up is open.</li>
+                <li>Metadata and sessions live in SQLite on a named volume, so a redeploy keeps every dashboard.</li>
+                <li>Pushes to <code>main</code> run CI (compose validate + image build), then deploy over SSH only after the build passes.</li>
+            </ul>
+
+            <h2 class="showcase-h2">stack</h2>
+            <ul class="showcase-list tags">
+                <li>Python 3.12 / FastAPI</li>
+                <li>React 19 / TypeScript</li>
+                <li>ECharts</li>
+                <li>DuckDB / PyArrow</li>
+                <li>SQLite / SQLAlchemy</li>
+                <li>Docker &amp; Compose</li>
+                <li>Caddy</li>
+                <li>GitHub Actions</li>
+                <li>Puppeteer</li>
+                <li>Google Cloud Platform</li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>
