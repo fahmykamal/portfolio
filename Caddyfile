@@ -1,4 +1,4 @@
-fahmykamal.site {
+http://fahmykamal.site {
 	@index path /index.html
 	redir @index / permanent
 
@@ -6,18 +6,18 @@ fahmykamal.site {
 	file_server
 }
 
-www.fahmykamal.site {
+http://www.fahmykamal.site {
 	redir https://fahmykamal.site{uri} permanent
 }
 
-short.fahmykamal.site {
+http://short.fahmykamal.site {
 	reverse_proxy host.docker.internal:5076
 }
 
 # The dashboard app is password protected: its API lets anyone sign up, so the
 # gate is in front of the whole site rather than inside the app.
 # Rotate with: docker run --rm portfolio-caddy:latest caddy hash-password --plaintext "<password>"
-dashboard.fahmykamal.site {
+http://dashboard.fahmykamal.site {
 	basic_auth {
 		admin $2a$14$xfBWyq3yRLLbLi.8bKnxqulGYMyMwKiJaJuCYkmRgdaaetlPtXSAq
 	}
